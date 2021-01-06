@@ -6,6 +6,8 @@ import '../modal_bottom_sheet.dart';
 
 const Duration _bottomSheetDuration = Duration(milliseconds: 400);
 
+typedef Future OnPop(BuildContext context);
+
 class _ModalBottomSheet<T> extends StatefulWidget {
   const _ModalBottomSheet({
     super.key,
@@ -16,6 +18,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
     this.expanded = false,
     this.enableDrag = true,
     this.animationCurve,
+    this.onPop,
   });
 
   final double? closeProgressThreshold;
@@ -25,6 +28,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
   final bool enableDrag;
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
+  final OnPop? onPop;
 
   @override
   _ModalBottomSheetState<T> createState() => _ModalBottomSheetState<T>();
@@ -104,7 +108,11 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
                     : null,
                 onClosing: () {
                   if (widget.route.isCurrent) {
-                    Navigator.of(context).pop();
+                    if (widget.onPop != null) {
+                      widget.onPop!(context);
+                    } else {
+                      Navigator.of(context).pop();
+                    }
                   }
                 },
                 child: child!,
@@ -138,6 +146,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
     this.animationCurve,
     Duration? duration,
     super.settings,
+    this.onPop,
   })  : duration = duration ?? _bottomSheetDuration;
 
   final double? closeProgressThreshold;
@@ -154,6 +163,8 @@ class ModalSheetRoute<T> extends PageRoute<T> {
 
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
+
+  final OnPop? onPop;
 
   @override
   Duration get transitionDuration => duration;
@@ -204,6 +215,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
         bounce: bounce,
         enableDrag: enableDrag,
         animationCurve: animationCurve,
+        onPop: onPop,
       ),
     );
     return bottomSheet;
