@@ -7,6 +7,7 @@ import '../modal_bottom_sheet.dart';
 const Duration _bottomSheetDuration = Duration(milliseconds: 400);
 
 typedef Future OnPop(BuildContext context);
+typedef void OnCheckingWillPop(bool isChecking);
 
 class _ModalBottomSheet<T> extends StatefulWidget {
   const _ModalBottomSheet({
@@ -18,6 +19,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
     this.expanded = false,
     this.enableDrag = true,
     this.animationCurve,
+    this.onCheckingWillPop,
     this.onPop,
   });
 
@@ -29,6 +31,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
   final OnPop? onPop;
+  final OnCheckingWillPop? onCheckingWillPop;
 
   @override
   _ModalBottomSheetState<T> createState() => _ModalBottomSheetState<T>();
@@ -102,7 +105,9 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
                 animationController: widget.route._animationController!,
                 shouldClose: widget.route._hasScopedWillPopCallback
                     ? () async {
+                        widget.onCheckingWillPop?.call(true);
                         final willPop = await widget.route.willPop();
+                        widget.onCheckingWillPop?.call(false);
                         return willPop != RoutePopDisposition.doNotPop;
                       }
                     : null,
@@ -146,6 +151,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
     this.animationCurve,
     Duration? duration,
     super.settings,
+    this.onCheckingWillPop,
     this.onPop,
   })  : duration = duration ?? _bottomSheetDuration;
 
@@ -164,6 +170,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
 
+  final OnCheckingWillPop? onCheckingWillPop;
   final OnPop? onPop;
 
   @override
@@ -215,6 +222,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
         bounce: bounce,
         enableDrag: enableDrag,
         animationCurve: animationCurve,
+        onCheckingWillPop: onCheckingWillPop,
         onPop: onPop,
       ),
     );

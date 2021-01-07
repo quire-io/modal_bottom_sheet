@@ -199,6 +199,7 @@ class CupertinoModalBottomSheetRoute<T> extends ModalSheetRoute<T> {
     this.topRadius = _kDefaultTopRadius,
     this.previousRouteAnimationCurve,
     this.overlayStyle,
+    super.onCheckingWillPop,
     super.onPop,
   });
 
