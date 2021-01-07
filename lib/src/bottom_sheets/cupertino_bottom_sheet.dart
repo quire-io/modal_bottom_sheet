@@ -159,6 +159,7 @@ class CupertinoModalBottomSheetRoute<T> extends ModalBottomSheetRoute<T> {
     this.transitionBackgroundColor,
     this.topRadius = _default_top_radius,
     this.previousRouteAnimationCurve,
+    OnCheckingWillPop onCheckingWillPop,
     OnPop onPop
   })  : assert(expanded != null),
         assert(isDismissible != null),
@@ -178,6 +179,7 @@ class CupertinoModalBottomSheetRoute<T> extends ModalBottomSheetRoute<T> {
           settings: settings,
           animationCurve: animationCurve,
           duration: duration,
+          onCheckingWillPop: onCheckingWillPop,
           onPop: onPop
         );
 
